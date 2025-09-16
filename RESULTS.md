@@ -12,8 +12,20 @@
 * **初始本金**: 10,000
 * **基础赌注**: 1
 * **目标金额**: 20,000 (本金翻倍)
-* **模拟总次数**: 20,000,000 (两千万次)
+* **模拟总次数**: 2,000,000,000 (两亿次)
 * **硬件环境**: Intel Core i3-8100t
 * **构建模式**: Release
 
 ### 实验结果
+
+Starting Martingale Strategy Simulation...
+Total simulations to run: 200000000
+------------------------------------
+Time elapsed: 4300.55 seconds
+------------------------------------
+Results:
+Rounds Won: 99772861
+Rounds Lost: 100227139
+Win Probability:   49.89%
+Loss Probability:  50.11%
+------------------------------------
