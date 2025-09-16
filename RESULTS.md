@@ -18,16 +18,6 @@
 
 ### 实验结果
 
-```
-Starting Martingale Strategy Simulation...
-Total simulations to run: 200000000
-------------------------------------
-Time elapsed: 4300.55 seconds
-------------------------------------
-Results:
-Rounds Won: 99772861
-Rounds Lost: 100227139
-Win Probability:   49.89%
-Loss Probability:  50.11%
-------------------------------------
-```
+- 严格模式:36/73 大概1:2
+- all-in模式:50:50 几乎是五五开
+- reset模式: 50:50 几乎是五五开
