@@ -18,6 +18,7 @@
 
 ### 实验结果
 
+```
 Starting Martingale Strategy Simulation...
 Total simulations to run: 200000000
 ------------------------------------
@@ -29,3 +30,4 @@ Rounds Lost: 100227139
 Win Probability:   49.89%
 Loss Probability:  50.11%
 ------------------------------------
+```
