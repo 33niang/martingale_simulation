@@ -9,12 +9,17 @@ int simulate_game_round_thread_safe(double initial_capital, double target_capita
 void print_progress(double percentage);
 
 // --- 主函数 ---
+// --- 主函数 ---
 int main() {
     // --- 模拟参数配置 ---
-    double initial_capital = 10000.0;
-    double base_bet = 1.0;
-    int num_simulations = 200; // 您可以改回两亿或任意数字
-    double target_capital = initial_capital * 2.0;
+    double initial_capital = 10000.0; // 初始本金
+    double base_bet = 1.0;          // 基础赌注
+
+    // 【修复】对于大数模拟，必须使用 long long 类型
+    // 数字后面的 LL 后缀是告诉编译器这是一个 long long 类型的常量
+    long long num_simulations = 200000000LL;   // 模拟总次数 (二十亿)
+
+    double target_capital = initial_capital * 2.0; // 目标金额
 
     // --- 结果统计变量 ---
     long long win_count = 0;
@@ -22,7 +27,16 @@ int main() {
 
     // --- 进度条相关变量 ---
     long long completed_count = 0;
-    int update_interval = (num_simulations / 100) + 1;
+    // 更新间隔也使用 long long 以防万一
+    long long update_interval = (num_simulations / 100) + 1;
+
+
+    // 【注意】打印 long long 需要用 %lld
+    printf("Starting Martingale Strategy Simulation...\n");
+    printf("Total simulations to run: %lld\n", num_simulations);
+
+    // 记录开始时间
+    double start_time = omp_get_wtime();
 
     // --- 高质量随机数种子生成 ---
     int max_threads = omp_get_max_threads();
@@ -32,11 +46,6 @@ int main() {
         seeds[i] = rand();
     }
 
-    printf("Starting Martingale Strategy Simulation...\n");
-    printf("Total simulations to run: %d\n", num_simulations);
-
-    double start_time = omp_get_wtime();
-
     // --- 并行计算区域 ---
     #pragma omp parallel
     {
@@ -44,7 +53,9 @@ int main() {
         unsigned int my_seed = seeds[thread_id];
 
         #pragma omp for reduction(+:win_count, loss_count)
-        for (int i = 0; i < num_simulations; i++) {
+        // 【修复】将循环计数器 i 的类型也改为 long long
+        for (long long i = 0; i < num_simulations; i++) {
+            // 执行单次模拟
             if (simulate_game_round_thread_safe(initial_capital, target_capital, base_bet, &my_seed)) {
                 win_count++;
             } else {
@@ -63,20 +74,21 @@ int main() {
         }
     }
 
-    free(seeds);
+    free(seeds); // 释放内存
 
     print_progress(1.0);
     printf("\n");
 
     double end_time = omp_get_wtime();
 
+    // --- 打印最终结果 ---
     printf("\n\nSimulation Finished!\n");
     printf("------------------------------------\n");
     printf("Time elapsed: %.2f seconds\n", end_time - start_time);
     printf("------------------------------------\n");
     printf("Results:\n");
-    printf("Rounds Won: %lld\n", win_count);
-    printf("Rounds Lost: %lld\n", loss_count);
+    printf("Rounds Won: %lld\n", win_count);      // 【注意】打印 long long 需要用 %lld
+    printf("Rounds Lost: %lld\n", loss_count);     // 【注意】打印 long long 需要用 %lld
     printf("Win Probability:   %.2f%%\n", (double)win_count / num_simulations * 100.0);
     printf("Loss Probability:  %.2f%%\n", (double)loss_count / num_simulations * 100.0);
     printf("------------------------------------\n");
